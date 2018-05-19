@@ -31,9 +31,13 @@
 #   include <unistd.h>
 #   include <sys/types.h>
 #   include <limits.h>
+#elif defined(WIN32)
+#   include <Windows.h>
 #endif // Includes
 
 #include "imgui.h"
+
+#include "PlatformConstants.h"
 
 namespace panorama {
     namespace utils {
@@ -46,6 +50,8 @@ namespace panorama {
         bool isRunningInPrivilagedMode();
 
         std::string getCurrentProcessDir();
+
+		bool fileExists(const std::string &sFilePath);
     }
 
     namespace guiutils {

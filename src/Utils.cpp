@@ -53,23 +53,49 @@ bool panorama::utils::isNumber(const char *cstr) {
 
 bool panorama::utils::isRunningInPrivilagedMode() {
 #if defined(__linux__) || defined(LINUX)
-    return getuid() == 0;
+    return static_cast<bool>(getuid() == 0);
+#elif defined(WIN32)
+    // TODO
+    return false;
 #endif // Per-platform implementation
 }
 
 string panorama::utils::getCurrentProcessDir() {
-    char path[PATH_MAX];
-    string retPath;
-    memset(path, 0, sizeof(path));
+    string sRetPath;
+
+#if defined(__linux__) || defined(LINUX)
+    char path[PANORAMA_PATH_MAX] = { 0 };
 
     if (readlink("/proc/self/exe", path, PATH_MAX) != -1) {
-        retPath = path;
-        retPath.erase(retPath.find_last_of('/'));
+        sRetPath = path;
+        sRetPath.erase(sRetPath.find_last_of('/'));
     }
     else
         return "";
+    
+#elif defined(WIN32)
+    char path[PANORAMA_PATH_MAX] = { 0 };
 
-    return retPath;
+    if (GetModuleFileName(nullptr, path, PANORAMA_PATH_MAX) > 0) {
+        sRetPath = path;
+        sRetPath.erase(sRetPath.find_last_of('\\'));
+    }
+    else
+        return "";
+#endif
+
+    return sRetPath;
+}
+
+bool panorama::utils::fileExists(const std::string &sFilePath) {
+#if defined(__linux__) || defined(LINUX)
+    return static_cast<bool>(access(sFontPath.c_str(), F_OK) == 0);
+#elif defined(WIN32)
+    DWORD dwAttributes = GetFileAttributes(sFilePath.c_str());
+
+    return static_cast<bool>(dwAttributes != INVALID_FILE_ATTRIBUTES 
+        && !(dwAttributes & FILE_ATTRIBUTE_DIRECTORY));
+#endif
 }
 
 void panorama::guiutils::drawBackgroundTextOnGraph(ImFont *fntTextFont,
