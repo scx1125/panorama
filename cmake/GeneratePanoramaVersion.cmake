@@ -34,15 +34,15 @@ function(GeneratePanoramaVersion)
             OUTPUT_STRIP_TRAILING_WHITESPACE
     )
 
+	# Read version information from file
+    file(READ ${CMAKE_SOURCE_DIR}/version PANORAMA_VERSION)
+    string(REGEX REPLACE "\n$" "" PANORAMA_VERSION "${PANORAMA_VERSION}")
+    set(PANORAMA_VERSION ${PANORAMA_VERSION} PARENT_SCOPE)
+	
     # Set version string
     if(NOT GIT_BRANCH MATCHES "master")
         # Set versions
-        set(PANORAMA_VERSION "\"${GIT_BRANCH}-${GIT_COMMIT_HASH}\"")
-    else()
-        # Read version information from file
-        file(READ ${CMAKE_SOURCE_DIR}/version PANORAMA_VERSION)
-        string(REGEX REPLACE "\n$" "" PANORAMA_VERSION "${PANORAMA_VERSION}")
-        set(PANORAMA_VERSION ${PANORAMA_VERSION} PARENT_SCOPE)
+        set(PANORAMA_VERSION "\"${PANORAMA_VERSION}-${GIT_BRANCH}-${GIT_COMMIT_HASH}\"")
     endif()
 
     # Set major, minor and patch versions.
@@ -51,6 +51,7 @@ function(GeneratePanoramaVersion)
 
     # Get list length
     list(LENGTH VERSION_LIST VERSION_LIST_LENGTH)
+	message("\n\n\n${PANORAMA_VERSION}\n\n\n")
 
     # Get major and minor versions
     list(GET VERSION_LIST 0 PANORAMA_VERSION_MAJOR)
