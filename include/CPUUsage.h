@@ -56,7 +56,7 @@ namespace panorama {
         // Getters
         inline const std::vector<float> &getCoreUsageDataVector(int nCore) { return m_vvfUsageSamplesPerCore[nCore]; }
         inline const float *getCoreUsageDataArray(int nCore) { return m_vvfUsageSamplesPerCore[nCore].data(); }
-        inline const int getCoreUsageDataArrayLength(int nCore) { return m_vvfUsageSamplesPerCore[nCore].size(); }
+        inline const std::size_t getCoreUsageDataArrayLength(int nCore) { return m_vvfUsageSamplesPerCore[nCore].size(); }
 
         std::string usageToString(float fUsageSample);
 
@@ -70,6 +70,11 @@ namespace panorama {
             sampleCpuCoreUsage_Linux(const std::string &sDataLine,
                                      const std::vector<TimesTuple> &vPreviousTimes);
 #           define sampleCpuUsage sampleCpuUsage_Linux
+#       elif defined(WIN32)
+            // Main function
+            static UsageAndTimesTuple sampleCpuUsage_Windows(const std::vector<TimesTuple> &vPreviousTimes);
+
+#           define sampleCpuUsage sampleCpuUsage_Windows
 #       endif
 
     private:

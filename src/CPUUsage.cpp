@@ -159,10 +159,13 @@ void panorama::CPUUsage::getCpuUsageData_Unix() {
     std::cout << "getCpuUsageData_Unix" << std::endl;
 }
 
-#elif defined(_WIN32)
+#elif defined(WIN32)
 
-void panorama::CPUUsage::getCpuUsageData_Window() {
-    std::cout << "getCpuUsageData_Window" << std::endl;
+panorama::UsageAndTimesTuple panorama::CPUUsage::sampleCpuUsage_Windows(const std::vector<panorama::TimesTuple> &vPreviousTimes) {
+    std::vector<float> vPercentages;
+    std::vector<panorama::TimesTuple> vNewPreviousTimes;
+
+    return std::make_tuple(std::move(vPercentages), std::move(vNewPreviousTimes));
 }
 
 #endif // PER-PLATFORM IMPLEMENTATION

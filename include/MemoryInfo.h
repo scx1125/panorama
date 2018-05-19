@@ -77,6 +77,12 @@ namespace panorama {
 
 #       define getMemoryInfoSnapshot getMemoryInfoSnapshot_Linux
 
+#       elif defined(WIN32)
+
+        static MemoryInfoSnapshot getMemoryInfoSnapshot_Windows();
+
+#       define getMemoryInfoSnapshot getMemoryInfoSnapshot_Windows
+
 #       endif
 
     private:

@@ -26,7 +26,11 @@
 #   include <sys/capability.h>
 #   include <signal.h>
 #   include <errno.h>
+#elif defined(WIN32)
+// TODO
 #endif // Includes
+
+#include "PlatformConstants.h"
 
 namespace panorama {
 
@@ -51,7 +55,23 @@ namespace panorama {
 #       define getPriority getPriority_Linux
 #       define canChangePriority canChangePriority_Linux
 
-#       endif // Functions and definitions
+#       elif defined(WIN32)
+
+        // Library utility functions
+        static int terminateProcess_Windows(PANORAMA_PROCESSID_TYPE pid);
+        static int killProcess_Windows(PANORAMA_PROCESSID_TYPE pid);
+        static int changeProcessPriority_Windows(PANORAMA_PROCESSID_TYPE pid, int prio);
+        static int getPriority_Windows(PANORAMA_PROCESSID_TYPE pid);
+
+        static bool canChangePriority_Windows();
+
+#       define terminateProcess terminateProcess_Windows
+#       define killProcess killProcess_Windows
+#       define changeProcessPriority changeProcessPriority_Windows
+#       define getPriority getPriority_Windows
+#       define canChangePriority canChangePriority_Windows
+
+#       endif
     };
 
 }

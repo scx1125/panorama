@@ -33,33 +33,34 @@
 #include "ProcessUtils.h"
 
 #if defined(__linux__) || defined(LINUX)
+#    include <dirent.h>
+#    include <sys/types.h>
+#    include <sys/stat.h>
+#    include <sys/resource.h>
+#    include <limits.h>
+#    include <unistd.h>
 
-// INCLUDES
-#include <dirent.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/resource.h>
-#include <limits.h>
-#include <unistd.h>
+//   Defines for parsing /proc/stat
+#    define PROCLIST_PROC_STAT_PID 1
+#    define PROCLIST_PROC_STAT_NAME 2
+#    define PROCLIST_PROC_STAT_NUM_THREADS 20
+#    define PROCLIST_PROC_STAT_UTIME 14
+#    define PROCLIST_PROC_STAT_STIME 15
+#    define PROCLIST_PROC_STAT_CUTIME 16
+#    define PROCLIST_PROC_STAT_CSTIME 17
+#    define PROCLIST_PROC_STAT_NICE   19
+#    define PROCLIST_PROC_STAT_STARTTIME 22
+#    define PROCLIST_PROC_STAT_MAX_INDEX 22
 
-// Defines for parsing /proc/stat
-#define PROCLIST_PROC_STAT_PID 1
-#define PROCLIST_PROC_STAT_NAME 2
-#define PROCLIST_PROC_STAT_NUM_THREADS 20
-#define PROCLIST_PROC_STAT_UTIME 14
-#define PROCLIST_PROC_STAT_STIME 15
-#define PROCLIST_PROC_STAT_CUTIME 16
-#define PROCLIST_PROC_STAT_CSTIME 17
-#define PROCLIST_PROC_STAT_NICE   19
-#define PROCLIST_PROC_STAT_STARTTIME 22
-#define PROCLIST_PROC_STAT_MAX_INDEX 22
-
-#endif // INCLUDES AND DEFINES
+#elif defined(WIN32)
+#    include <Windows.h>
+#endif // <-- Includes and Definitions
 
 namespace panorama {
 
     struct ProcessInfo {
         PANORAMA_PROCESSID_TYPE m_nPid;
+        PANORAMA_PROCHANDLE_TYPE m_nProcHandle;
         std::string m_sName, m_sCommand;
         unsigned long long m_ullVirtMemSize, m_ullResidentMemSize, m_ullSharedMemSize;
         float m_fCpuUsagePercent;
@@ -89,6 +90,12 @@ namespace panorama {
         static std::vector<ProcessInfo> getProcessList_Linux();
 
 #       define getProcessList getProcessList_Linux
+
+#       elif defined(WIN32)
+
+        static std::vector<ProcessInfo> getProcessList_Windows();
+
+#       define getProcessList getProcessList_Windows
 
 #       endif // getProcessList()
 

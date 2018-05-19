@@ -33,7 +33,9 @@ void panorama::ProcessList::updateData(std::future<std::vector<panorama::Process
     m_vProcesses = futTask.get();
 }
 
-// Static factory method
+// Static factory method for getting the process list
+#if defined(__linux__) || defined(LINUX)
+
 std::vector<panorama::ProcessInfo> panorama::ProcessList::getProcessList_Linux() {
     std::vector<ProcessInfo> vProcessList;
     float fTotalUptime;
@@ -114,6 +116,7 @@ std::vector<panorama::ProcessInfo> panorama::ProcessList::getProcessList_Linux()
                 switch (nIndex) {
                     case PROCLIST_PROC_STAT_PID:
                         oProcInfo.m_nPid = static_cast<PANORAMA_PROCESSID_TYPE>(std::stoul(sValue));
+                        oProcInfo.m_nProcHandle = oProcInfo.m_nPid; // On Linux, the pid_t is also the process' "handle".
                         break;
                     case PROCLIST_PROC_STAT_NAME:
                         if (oProcInfo.m_sName.empty())
@@ -201,3 +204,10 @@ std::vector<panorama::ProcessInfo> panorama::ProcessList::getProcessList_Linux()
     return std::move(vProcessList);
 }
 
+#elif defined(WIN32)
+
+std::vector<panorama::ProcessInfo> panorama::ProcessList::getProcessList_Windows() {
+    return { };
+}
+
+#endif // Per-platform implementation of getProcessList()

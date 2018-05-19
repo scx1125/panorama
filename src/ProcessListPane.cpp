@@ -19,7 +19,7 @@
 
 panorama::ProcessListPane::ProcessListPane() : m_eUnitScale{MeasurementScale::MEASUREMENT_SCALE_BINARY},
                                                m_eUnit{MeasurementUnit::UNIT_MIB},
-                                               m_nCurrentlySelectedProcess{-1},
+                                               m_nCurrentlySelectedProcess{ PANORAMA_INVALID_PROC_ID }, 
                                                m_nCurrentlyVisibleProcesses{ 0 } {
     m_arrFilterBuffer.fill(0);
 }
@@ -61,15 +61,15 @@ void panorama::ProcessListPane::renderUI() {
     m_stTextFilter.Draw("##Filter", ImGui::GetContentRegionAvailWidth() - 2 * ImGui::CalcTextSize("LONGENOUGHTEXT").x);
 
     // Prioity popup (if anything's selected)
-    if (m_nCurrentlySelectedProcess != -1) {
+    if (m_nCurrentlySelectedProcess != PANORAMA_INVALID_PROC_ID) {
         ImGui::SameLine();
 
         if (ImGui::Button("Priority...")) {
-            if (ProcessUtils::canChangePriority_Linux())
+            if (ProcessUtils::canChangePriority())
                 ImGui::OpenPopup("priopopup");
         }
 
-        if (!ProcessUtils::canChangePriority_Linux() && ImGui::IsItemHovered()) {
+        if (!ProcessUtils::canChangePriority() && ImGui::IsItemHovered()) {
             ImGui::BeginTooltip();
 
             ImGui::Text("You need to run Panorama in privileged mode to set priorities for processes!");
@@ -123,7 +123,7 @@ void panorama::ProcessListPane::renderUI() {
             // Now check if this has been selected.
             // If it did, it does not show up with the new filter, so clear the selection
             if (m_nCurrentlySelectedProcess == procInfo.m_nPid) {
-                m_nCurrentlySelectedProcess = -1;
+                m_nCurrentlySelectedProcess = PANORAMA_INVALID_PROC_ID;
                 m_nCurrentlySelectedProcessPrio = -1;
             }
 
@@ -196,7 +196,7 @@ void panorama::ProcessListPane::renderUI() {
         ImGui::SameLine();
 
         if (ImGui::Button("OK")) {
-            ProcessUtils::changeProcessPriority_Linux(m_nCurrentlySelectedProcess, m_nCurrentlySelectedProcessPrio);
+            ProcessUtils::changeProcessPriority(m_nCurrentlySelectedProcess, m_nCurrentlySelectedProcessPrio);
             ImGui::CloseCurrentPopup();
         }
 

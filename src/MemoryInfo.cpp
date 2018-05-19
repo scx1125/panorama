@@ -31,6 +31,31 @@ panorama::MemoryInfo::MemoryInfo() {
 
 panorama::MemoryInfo::~MemoryInfo() { }
 
+
+std::future<panorama::MemoryInfoSnapshot> panorama::MemoryInfo::launchProcessListGetterTask() {
+    return std::async(std::launch::async, &MemoryInfo::getMemoryInfoSnapshot);
+}
+
+bool panorama::MemoryInfo::isTaskReady(std::future<MemoryInfoSnapshot> &futTask) {
+    return futTask.wait_for(std::chrono::seconds{ 0 }) == std::future_status::ready;
+}
+
+void panorama::MemoryInfo::updateData(std::future<MemoryInfoSnapshot> &futTask) {
+    // Update the current snapshot
+    m_oMemInfoSnapshot = futTask.get();
+
+    // Remove the first element of every vector and push back the current one
+    m_vRamUsage.erase(m_vRamUsage.cbegin());
+    m_vRamUsage.push_back(100.0f - (static_cast<float>(m_oMemInfoSnapshot.ulAvailRam)
+        / m_oMemInfoSnapshot.ulTotalRam) * 100);
+
+    m_vSwapUsage.erase(m_vSwapUsage.cbegin());
+    m_vSwapUsage.push_back(100.0f - (static_cast<float>(m_oMemInfoSnapshot.ulFreeSwap)
+        / m_oMemInfoSnapshot.ulTotalSwap) * 100);
+}
+
+#if defined(__linux__) || defined(LINUX)
+
 panorama::MemoryInfoSnapshot panorama::MemoryInfo::getMemoryInfoSnapshot_Linux() {
     panorama::MemoryInfoSnapshot oResult = { 0 };
 
@@ -76,25 +101,14 @@ panorama::MemoryInfoSnapshot panorama::MemoryInfo::getMemoryInfoSnapshot_Linux()
     return oResult;
 }
 
-std::future<panorama::MemoryInfoSnapshot> panorama::MemoryInfo::launchProcessListGetterTask() {
-    return std::async(std::launch::async, &MemoryInfo::getMemoryInfoSnapshot);
+#elif defined(WIN32)
+
+panorama::MemoryInfoSnapshot panorama::MemoryInfo::getMemoryInfoSnapshot_Windows() {
+    panorama::MemoryInfoSnapshot oResult = { 0 };
+
+    // TODO
+
+    return oResult;
 }
 
-bool panorama::MemoryInfo::isTaskReady(std::future<MemoryInfoSnapshot> &futTask) {
-    return futTask.wait_for(std::chrono::seconds{0}) == std::future_status::ready;
-}
-
-void panorama::MemoryInfo::updateData(std::future<MemoryInfoSnapshot> &futTask) {
-    // Update the current snapshot
-    m_oMemInfoSnapshot = futTask.get();
-
-    // Remove the first element of every vector and push back the current one
-    m_vRamUsage.erase(m_vRamUsage.cbegin());
-    m_vRamUsage.push_back(100.0f - (static_cast<float>(m_oMemInfoSnapshot.ulAvailRam)
-                                  / m_oMemInfoSnapshot.ulTotalRam) * 100);
-
-    m_vSwapUsage.erase(m_vSwapUsage.cbegin());
-    m_vSwapUsage.push_back(100.0f - (static_cast<float>(m_oMemInfoSnapshot.ulFreeSwap)
-                                   / m_oMemInfoSnapshot.ulTotalSwap) * 100);
-}
-
+#endif // Per-platform implementation of getMemorySnapshotInfo()

@@ -23,6 +23,7 @@
 #include <string>
 #include <future>
 #include <chrono>
+#include <algorithm>
 
 #include "imgui.h"
 #include "imgui_internal.h"

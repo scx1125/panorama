@@ -92,6 +92,10 @@ namespace panorama {
         void getInformation_Linux();
 
 #       define getInformation getInformation_Linux
+#       elif defined(WIN32)
+        void getInformation_Windows();
+
+#       define getInformation getInformation_Windows
 #       endif
 
         // Properties

@@ -58,4 +58,31 @@ bool panorama::ProcessUtils::canChangePriority_Linux() {
     return flag == 1;
 }
 
+#elif defined(WIN32)
+
+int panorama::ProcessUtils::terminateProcess_Windows(PANORAMA_PROCESSID_TYPE pid) {
+    // TODO
+    return 0;
+}
+
+int panorama::ProcessUtils::killProcess_Windows(PANORAMA_PROCESSID_TYPE pid) {
+    // TODO
+    return 0;
+}
+
+int panorama::ProcessUtils::changeProcessPriority_Windows(PANORAMA_PROCESSID_TYPE pid, int prio) {
+    // TODO
+    return 0;
+}
+
+int panorama::ProcessUtils::getPriority_Windows(PANORAMA_PROCESSID_TYPE pid) {
+    // TODO
+    return 0;
+}
+
+bool panorama::ProcessUtils::canChangePriority_Windows() {
+    // TODO
+    return false;
+}
+
 #endif

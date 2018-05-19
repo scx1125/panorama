@@ -25,10 +25,16 @@
 
 #include <iostream>
 #include <string>
-#include <unistd.h>
-#include <wordexp.h>
 
+#include "Utils.h"
 #include "MainWindow.h"
+
+// Platform-specific includes
+#if defined(__linux__) || defined(LINUX)
+#    include <unistd.h>
+#    include <wordexp.h>
+#elif defined(WIN32)
+#endif // <-- Platform-specific includes
 
 #define MAIN_WINDOW_WIDTH 1280
 #define MAIN_WINDOW_HEIGHT 720
@@ -44,7 +50,7 @@ void loadFonts(ImGuiIO &io) {
 
     // Check if the fonts exists.
     std::string sFontPath = panorama::utils::getCurrentProcessDir() + "/DroidSans.ttf";
-    if (access(sFontPath.c_str(), F_OK) == 0) {
+    if (panorama::utils::fileExists(sFontPath)) {
         io.Fonts->AddFontFromFileTTF(sFontPath.c_str(), 16.0f * g_fFontScaling);
         io.Fonts->AddFontFromFileTTF(sFontPath.c_str(), 40.0f * g_fFontScaling);
         io.Fonts->AddFontFromFileTTF(sFontPath.c_str(), 60.0f * g_fFontScaling);
@@ -126,6 +132,9 @@ void destroyApplication() {
     SDL_Quit();
 }
 
+#if defined(WIN32)
+#undef main
+#endif // Fix linkage on MSVC and Windows
 int main(int argc, char **argv) {
     // Init application
     int iInitResult = initApplication();

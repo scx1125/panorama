@@ -77,4 +77,11 @@ void panorama::CPUInformation::getInformation_Linux() {
 
 // ---------------------------------------------------------------------------------------
 
+#elif defined(WIN32)
+
+void panorama::CPUInformation::getInformation_Windows() {
+    // TODO: Implement this.
+    m_nThreads = 1;
+}
+
 #endif
