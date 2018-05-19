@@ -41,6 +41,12 @@ set(SRCS panorama.cpp
          Window.cpp
          MainWindow.cpp)
 
+# On Windows/MSVC, there is this annoying definition of a max() macro that overrides
+# the proper std::max(). Get around that.
+if (WIN32)
+    add_definitions(-DNOMINMAX)
+endif()
+
 # Create the configuration file
 configure_file("${CMAKE_SOURCE_DIR}/config.h.in"
                "${CMAKE_BINARY_DIR}/config.h")
@@ -56,9 +62,13 @@ target_include_directories(panorama PRIVATE ${CMAKE_SOURCE_DIR}/imgui
         ${CMAKE_SOURCE_DIR}/gui
         ${CMAKE_BINARY_DIR}
         ${CMAKE_SOURCE_DIR}/include
-        ${SDL2_INCLUDE_DIRS})
+        ${SDL_INCLUDE_DIR})
 
-target_link_libraries(panorama Threads::Threads ${OPENGL_LIBRARIES} dl SDL2 cap)
+if (WIN32)
+    target_link_libraries(panorama Threads::Threads ${OPENGL_LIBRARIES} ${SDL_LIBRARY})
+else()
+    target_link_libraries(panorama Threads::Threads ${OPENGL_LIBRARIES} dl SDL2 cap)
+endif()
 
 # Installation
 install(TARGETS panorama DESTINATION bin)
