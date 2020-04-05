@@ -64,6 +64,7 @@ void panorama::AboutDialog::renderUI() {
     ImGui::NextColumn();
 
     // SDL version
+    /**
     ImGui::TextDisabled("SDL Version");
     ImGui::NextColumn();
     {
@@ -76,6 +77,7 @@ void panorama::AboutDialog::renderUI() {
                             sdlVersionInfo.patch);
         ImGui::NextColumn();
     }
+     */
 
     // FontAwesome version
     // TODO: Find a way to extract this at compile time/runtime - currently hardcoded!

@@ -100,7 +100,7 @@ void panorama::ProcessListPane::renderUI() {
     ImGui::Separator();
 
     ImGui::BeginChild("##clmnprocesses_childframe",
-                      ImVec2(0, ImGui::GetContentRegionAvail().y - ImGui::GetItemsLineHeightWithSpacing()));
+                      ImVec2(0, ImGui::GetContentRegionAvail().y - ImGui::GetTextLineHeightWithSpacing()));
 
     ImGui::Columns(6, "##clmnsprocesses", true);
     ImGui::Separator();

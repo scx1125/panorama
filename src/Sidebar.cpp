@@ -50,7 +50,7 @@ void panorama::Sidebar::renderUI() {
         m_eCurrentlyVisiblePane = PaneType::PANETYPE_MEMORY;
 
     // Separator
-    const float fAvailSpace = ImGui::GetContentRegionAvail().y - ITEMS_AT_BOTTOM * ImGui::GetItemsLineHeightWithSpacing();
+    const float fAvailSpace = ImGui::GetContentRegionAvail().y - ITEMS_AT_BOTTOM * ImGui::GetTextLineHeightWithSpacing();
     ImGui::InvisibleButton("##siderbar_sep", ImVec2(m_fWidth, fAvailSpace));
 
     // Spacing
@@ -63,11 +63,14 @@ void panorama::Sidebar::renderUI() {
     }
 
     // Exit
+    // TODO: Reimplement in GFLW
     if (ImGui::Selectable("Exit")) {
+        /*
         SDL_Event event;
         event.type = SDL_QUIT;
 
         SDL_PushEvent(&event);
+         */
     }
 
     // Render about popup?

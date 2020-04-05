@@ -40,11 +40,13 @@
 #include "SampleRates.h"
 #include "PlotColorsArray.h"
 
+#define SIDEBAR_WIDTH_PERCENT 0.1f
+
 namespace panorama {
     class MainWindow : public Window {
     public:
         // Cnstr.
-        MainWindow(SDL_Window *pSdlWindow, const std::string &sTitle, int w, int h);
+        MainWindow(GLFWwindow *pGlfwWindow, const std::string &sTitle, int w, int h);
 
         // Dstr.
         ~MainWindow();

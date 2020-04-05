@@ -20,8 +20,8 @@
 
 using std::string;
 
-panorama::Window::Window(SDL_Window *pSdlWindow, std::string sTitle, int w, int h) :
-        m_pRawWindow{pSdlWindow}, m_sTitle{sTitle}, m_iWidth{w}, m_iHeight{h},
+panorama::Window::Window(GLFWwindow *pGlfwWindow, std::string sTitle, int w, int h) :
+        m_pRawWindow{pGlfwWindow}, m_sTitle{sTitle}, m_iWidth{w}, m_iHeight{h},
         m_bMaximized{false},
         m_eWindowFlags{ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoCollapse } {
     // If the title is empty, set it to something to avoid an assertion.
@@ -77,12 +77,8 @@ void panorama::Window::render() {
 
     // Setup window before it's drawn
     if (m_bMaximized) {
-        int iWidth, iHeight;
-
         // Get main SDL window's size
-        SDL_GetWindowSize(m_pRawWindow, &iWidth, &iHeight);
-        m_iWidth = iWidth;
-        m_iHeight = iHeight;
+        glfwGetFramebufferSize(m_pRawWindow, &m_iWidth, &m_iHeight);
 
         ImGui::SetNextWindowSize(ImVec2(m_iWidth, m_iHeight), ImGuiCond_Always);
         ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);

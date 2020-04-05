@@ -20,10 +20,10 @@
 
 using std::string;
 
-panorama::MainWindow::MainWindow(SDL_Window *pSdlWindow,
-                                const std::string &sTitle, int w, int h) : Window(pSdlWindow, sTitle, w, h),
+panorama::MainWindow::MainWindow(GLFWwindow *pGlfwWindow,
+                                const std::string &sTitle, int w, int h) : Window(pGlfwWindow, sTitle, w, h),
         m_eMeasurementUnits{MeasurementUnits::MEASUREMENT_UNITS_BINARY},
-        m_oSidebar{w * 0.1f}, m_oCpuPane{ },
+        m_oSidebar{w * SIDEBAR_WIDTH_PERCENT}, m_oCpuPane{ },
         m_oProcessListPane{ }, m_oMemInfoPane{ } { }
 
 panorama::MainWindow::~MainWindow() { }

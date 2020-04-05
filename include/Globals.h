@@ -19,12 +19,11 @@
 #ifndef PANORAMA_GLOBALS_H
 #define PANORAMA_GLOBALS_H
 
-#include <SDL.h>
+#include <GLFW/glfw3.h>
 
 #include "imgui.h"
 
-extern SDL_Window *g_sdlWindow;
-extern SDL_GLContext g_glContext;
+extern GLFWwindow *g_pGlfwWindow;
 extern float g_fFontScaling;
 
 #endif //PANORAMA_GLOBALS_H

@@ -20,10 +20,10 @@
 #define PANORAMA_WINDOW_H
 
 #include "imgui.h"
-#include "imgui_impl_sdl.h"
+#include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl2.h"
 
-#include <SDL.h>
+#include <GLFW/glfw3.h>
 
 #include <string>
 #include <imgui_internal.h>
@@ -32,7 +32,7 @@ namespace panorama {
     class Window {
     public:
         // Cnstr.
-        Window(SDL_Window *pSdlWindow, std::string sTitle, int w, int h);
+        Window(GLFWwindow *pGlfwWindow, std::string sTitle, int w, int h);
 
         // Dstr.
         virtual ~Window();
@@ -63,7 +63,7 @@ namespace panorama {
         virtual void renderUI() = 0;
 
         // Properties
-        SDL_Window *m_pRawWindow;
+        GLFWwindow *m_pRawWindow;
         int m_iWidth, m_iHeight;
         std::string m_sTitle;
         bool m_bMaximized;

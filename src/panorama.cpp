@@ -19,10 +19,8 @@
 #include "Globals.h"
 
 #include "imgui.h"
-#include "imgui_impl_sdl.h"
+#include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl2.h"
-#include <SDL.h>
-#include <SDL_opengl.h>
 
 #include <iostream>
 #include <string>
@@ -37,11 +35,15 @@
 #define MAIN_WINDOW_HEIGHT 720
 
 // Global variables
-SDL_Window *g_sdlWindow;
-SDL_GLContext g_glContext;
+GLFWwindow *g_pGlfwWindow;
 float g_fFontScaling = 1.0f;
 
-void loadFonts(ImGuiIO &io) {
+// TODO: Change this callback for something a bit more meaningful
+static void glfw_error_callback(int error, const char* description) {
+    std::fprintf(stderr, "Glfw Error %d: %s\n", error, description);
+}
+
+static void loadFonts(ImGuiIO &io) {
     // Load default font
     io.Fonts->AddFontDefault();
 
@@ -81,25 +83,17 @@ void loadFonts(ImGuiIO &io) {
 }
 
 int initApplication() {
-    // Setup SDL
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0) {
-        std::cerr << "SDL initialization error: " << SDL_GetError()  << std::endl;
+    // Setup GLFW
+    glfwSetErrorCallback(glfw_error_callback);
+    if (!glfwInit()) {
+        // Error callback handles error output
         return -1;
     }
-
-    // Setup window
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-    SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
-    SDL_DisplayMode current;
-    SDL_GetCurrentDisplayMode(0, &current);
 
     // If we have the PANORAMA_SCALING environment variable, we're gonna scale all fonts by it.
     // A bit of a double check here, but we need this to verify the scaling, since the utility
     // function does not check for errors.
-    const char * cstrScalingModifier;
+    const char *cstrScalingModifier;
     if ((cstrScalingModifier = std::getenv("PANORAMA_SCALING")) != nullptr) {
         try {
             g_fFontScaling = panorama::guiutils::getScalingFactor();
@@ -109,36 +103,43 @@ int initApplication() {
         }
     }
 
-    // Create SDL window
+    // Create title for the window
     std::string sTitle = "Panorama v." PANORAMA_VERSION;
     if (panorama::utils::isRunningInPrivilagedMode())
         sTitle += " (Privileged)";
 
-    g_sdlWindow = SDL_CreateWindow(sTitle.c_str(),
-                                   SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                                   MAIN_WINDOW_WIDTH * g_fFontScaling, MAIN_WINDOW_HEIGHT * g_fFontScaling,
-                                   SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+    // Setup a low-level window
+    g_pGlfwWindow = glfwCreateWindow(
+            MAIN_WINDOW_WIDTH * g_fFontScaling,
+            MAIN_WINDOW_HEIGHT * g_fFontScaling,
+            sTitle.c_str(),
+            NULL, NULL);
+    if (g_pGlfwWindow == nullptr) {
+        // Error callback handles error output
+        return -1;
+    }
 
-    g_glContext = SDL_GL_CreateContext(g_sdlWindow);
-    SDL_GL_SetSwapInterval(1); // Enable vsync
+    glfwMakeContextCurrent(g_pGlfwWindow);
+    glfwSwapInterval(1); // Enable vsync
+
 
     // Setup ImGui binding
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
 
+    // Setup style
+    ImGui::StyleColorsLight();
+
     // Initialize ImGui
-    ImGui_ImplSDL2_InitForOpenGL(g_sdlWindow, g_glContext);
+    ImGui_ImplGlfw_InitForOpenGL(g_pGlfwWindow, true);
     ImGui_ImplOpenGL2_Init();
 
     // Enable keyboard navigation
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 
     // Load fonts
     loadFonts(io);
-
-    // Setup style
-    ImGui::StyleColorsLight();
 
     return 0;
 }
@@ -146,12 +147,11 @@ int initApplication() {
 void destroyApplication() {
     // Cleanup
     ImGui_ImplOpenGL2_Shutdown();
-    ImGui_ImplSDL2_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
 
-    SDL_GL_DeleteContext(g_glContext);
-    SDL_DestroyWindow(g_sdlWindow);
-    SDL_Quit();
+    glfwDestroyWindow(g_pGlfwWindow);
+    glfwTerminate();
 }
 
 int main(int argc, char **argv) {
@@ -163,28 +163,23 @@ int main(int argc, char **argv) {
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
     // Init main window
-    panorama::MainWindow wndMain(g_sdlWindow, "", MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT);
+    panorama::MainWindow wndMain(g_pGlfwWindow, "", MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT);
     wndMain.setWindowFlags(ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse);
     wndMain.setMaximized(true);
 
     // Main loop
     bool done = false;
-    while (!done) {
+    while (!done && !glfwWindowShouldClose(g_pGlfwWindow)) {
+        // Poll and handle events (inputs, window resize, etc.)
         // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
         // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application.
         // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application.
         // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
-        SDL_Event event;
+        glfwPollEvents();
 
-        while (SDL_PollEvent(&event)) {
-            ImGui_ImplSDL2_ProcessEvent(&event);
-
-            if (event.type == SDL_QUIT)
-                done = true;
-        }
-
+        // Start the Dear ImGui frame
         ImGui_ImplOpenGL2_NewFrame();
-        ImGui_ImplSDL2_NewFrame(g_sdlWindow);
+        ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
         // Render main window
@@ -192,14 +187,30 @@ int main(int argc, char **argv) {
 
         // Rendering
         ImGui::Render();
+        int display_w, display_h;
+
+        glfwGetFramebufferSize(g_pGlfwWindow, &display_w, &display_h);
+        glViewport(0, 0, display_w, display_h);
+        glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        // Rendering
+        ImGui::Render();
         glViewport(0, 0, (int) ImGui::GetIO().DisplaySize.x, (int) ImGui::GetIO().DisplaySize.y);
         glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
         glClear(GL_COLOR_BUFFER_BIT);
 
-
+        // Legacy OpenGL 2 fixes
+        /*
+        GLint last_program;
+        glGetIntegerv(GL_CURRENT_PROGRAM, &last_program);
+        glUseProgram(0);
+         */
         ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
+        //glUseProgram(last_program);
 
-        SDL_GL_SwapWindow(g_sdlWindow);
+        glfwMakeContextCurrent(g_pGlfwWindow);
+        glfwSwapBuffers(g_pGlfwWindow);
     }
 
     destroyApplication();

@@ -27,8 +27,6 @@
 
 #include "FontDefinitions.h"
 
-#include <SDL.h>
-
 namespace panorama {
 
     class AboutDialog {

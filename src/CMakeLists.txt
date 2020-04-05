@@ -24,7 +24,7 @@ set(IMGUI_SRCS ${CMAKE_SOURCE_DIR}/imgui/imgui.cpp
                ${CMAKE_SOURCE_DIR}/imgui/imgui_draw.cpp
                ${CMAKE_SOURCE_DIR}/imgui/imgui_widgets.cpp
                ${CMAKE_SOURCE_DIR}/imgui/imgui_impl_opengl2.cpp
-               ${CMAKE_SOURCE_DIR}/imgui/imgui_impl_sdl.cpp)
+               ${CMAKE_SOURCE_DIR}/imgui/imgui_impl_glfw.cpp)
 
 # Set INIH sources
 set(INIH_SRCS ${CMAKE_SOURCE_DIR}/extern/inih.c)
@@ -52,19 +52,17 @@ configure_file("${CMAKE_SOURCE_DIR}/config.h.in"
                "${CMAKE_BINARY_DIR}/config.h")
 
 # Add binary target
-add_executable(panorama ${GL3W_SRCS}
-                        ${IMGUI_SRCS}
+add_executable(panorama ${IMGUI_SRCS}
                         ${SRCS})
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 
 target_include_directories(panorama PRIVATE 
         ${CMAKE_SOURCE_DIR}/imgui
-        ${CMAKE_SOURCE_DIR}/gl3w
         ${CMAKE_BINARY_DIR}
         ${CMAKE_SOURCE_DIR}/include
         ${SDL2_INCLUDE_DIRS})
 
-target_link_libraries(panorama Threads::Threads ${OPENGL_LIBRARIES} dl SDL2 cap)
+target_link_libraries(panorama Threads::Threads ${OPENGL_LIBRARIES} dl glfw cap)
 
 # Installation
 install(TARGETS panorama DESTINATION bin)
