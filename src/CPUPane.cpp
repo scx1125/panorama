@@ -19,7 +19,9 @@
 #include "MainWindow.h"
 #include "CPUPane.h"
 
-panorama::CPUPane::CPUPane()
+using namespace panorama;
+
+CPUPane::CPUPane()
         : m_oCpuInfo{}, m_oCpuUsage{ m_oCpuInfo.threads() }, m_oColorsArray{ m_oCpuInfo.threads() },
           m_fItemSpacing{ImGui::GetStyle().ItemSpacing.y},
           m_eGraphType{GraphType::GRAPH_TYPE_INDIVIDUAL} {
@@ -28,9 +30,9 @@ panorama::CPUPane::CPUPane()
         m_eGraphType = GraphType::GRAPH_TYPE_TOTAL;
 }
 
-panorama::CPUPane::~CPUPane() { }
+CPUPane::~CPUPane() { }
 
-void panorama::CPUPane::renderUI() {
+void CPUPane::renderUI() {
     ImGui::BeginChild("##cpuInfoPane");
 
     ImGui::PushFont(panorama::getFont(PANORAMA_FONT_TITLE));
@@ -88,6 +90,8 @@ void panorama::CPUPane::renderUI() {
     ImGui::Separator();
 
     // CPU Graphs
+    // TODO: Fix this so that the graphs do not plot the initial 0 value.
+    // TODO: Make the plots a bit thicker.
     {
         if (m_eGraphType == GraphType::GRAPH_TYPE_TOTAL) {
             float fLastSample = m_oCpuUsage.getCoreUsageDataVector(0).back();
@@ -101,8 +105,8 @@ void panorama::CPUPane::renderUI() {
                              v2GraphSize);
 
             // Draw overlay text
-            panorama::guiutils::drawBackgroundTextOnGraph(panorama::getFont(PANORAMA_FONT_EXTRALARGE), v2GraphSize,
-                                                          m_oCpuUsage.usageToString(fLastSample), 0.4f);
+            guiutils::drawBackgroundTextOnGraph(panorama::getFont(PANORAMA_FONT_EXTRALARGE), v2GraphSize,
+                                               m_oCpuUsage.usageToString(fLastSample), 0.4f);
         }
         else {
             // We display a maximum of 4 CPUs in a row, so based on that, calculate every graph's
