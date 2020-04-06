@@ -29,8 +29,6 @@
 #include "Theming.h"
 #include "Utils.h"
 
-#define ITEMS_AT_BOTTOM 2
-
 namespace panorama {
 
     // Enums

@@ -52,7 +52,6 @@ namespace panorama {
         ~MainWindow();
 
     private:
-
         enum MeasurementUnits {
             MEASUREMENT_UNITS_SI,
             MEASUREMENT_UNITS_BINARY
@@ -60,6 +59,9 @@ namespace panorama {
 
         // Overridden methods
         void renderUI() override;
+
+        // Menu initialization
+        void drawMenubar();
 
         // Properties
         MeasurementUnits m_eMeasurementUnits;
