@@ -23,7 +23,7 @@ using std::string;
 panorama::Window::Window(GLFWwindow *pGlfwWindow, std::string sTitle, int w, int h) :
         m_pRawWindow{pGlfwWindow}, m_sTitle{sTitle}, m_iWidth{w}, m_iHeight{h},
         m_bMaximized{false},
-        m_eWindowFlags{ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoCollapse } {
+        m_eWindowFlags{ ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoCollapse } {
     // If the title is empty, set it to something to avoid an assertion.
     if (m_sTitle.empty())
         m_sTitle = " ";
@@ -77,16 +77,21 @@ void panorama::Window::render() {
 
     // Setup window before it's drawn
     if (m_bMaximized) {
-        // Get main SDL window's size
+        // Get main window size
         glfwGetFramebufferSize(m_pRawWindow, &m_iWidth, &m_iHeight);
 
-        ImGui::SetNextWindowSize(ImVec2(m_iWidth, m_iHeight), ImGuiCond_Always);
-        ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
+        // We need to reserve space for the main menu. So we draw an empty one,
+        // and get the size. The MainWindow event loop will draw the actual menu.
+        float fMenuHeight;
+
+        if (ImGui::BeginMainMenuBar()) {
+            fMenuHeight = ImGui::GetWindowSize().y;
+            ImGui::EndMainMenuBar();
+        }
+        ImGui::SetNextWindowSize(ImVec2(m_iWidth, m_iHeight - fMenuHeight), ImGuiCond_Always);
+        ImGui::SetNextWindowPos(ImVec2(0, fMenuHeight), ImGuiCond_Always);
 
         m_eWindowFlags |= ImGuiWindowFlags_NoResize;
-    }
-    else {
-        m_eWindowFlags &= ~ImGuiWindowFlags_NoResize;
     }
 
     // Begin drawing the window

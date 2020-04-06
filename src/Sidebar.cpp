@@ -24,13 +24,13 @@ panorama::Sidebar::Sidebar(float fWidth)
 panorama::Sidebar::~Sidebar() { }
 
 void panorama::Sidebar::renderUI() {
+    const int SIDEBAR_BUTTON_PADDING = 30;
+
     // Determine scaling
     if (panorama::guiutils::getScalingFactor() > 1.0f)
-        m_fWidth = ImGui::CalcTextSize("PROCESSES").x + 30;
+        m_fWidth = ImGui::CalcTextSize("PROCESSES").x + SIDEBAR_BUTTON_PADDING;
 
     const ImVec2 v2ButtonSize = ImVec2(m_fWidth, m_fWidth / 2);
-    static bool bIsAboutOpen = false;
-    static bool bIsSettingsOpen = false;
 
     ImGui::BeginChild("##sidebar");
 
@@ -48,36 +48,6 @@ void panorama::Sidebar::renderUI() {
     if (ImGui::Selectable(ICON_FA_MEMORY " MEMORY",
                           (m_eCurrentlyVisiblePane == PaneType::PANETYPE_MEMORY), 0, v2ButtonSize))
         m_eCurrentlyVisiblePane = PaneType::PANETYPE_MEMORY;
-
-    // Separator
-    const float fAvailSpace = ImGui::GetContentRegionAvail().y - ITEMS_AT_BOTTOM * ImGui::GetTextLineHeightWithSpacing();
-    ImGui::InvisibleButton("##siderbar_sep", ImVec2(m_fWidth, fAvailSpace));
-
-    // Spacing
-    ImGui::Spacing();
-
-    // About
-    if (ImGui::Selectable("About...")) {
-        bIsAboutOpen = true;
-        ImGui::OpenPopup("About Panorama...");
-    }
-
-    // Exit
-    // TODO: Reimplement in GFLW
-    if (ImGui::Selectable("Exit")) {
-        /*
-        SDL_Event event;
-        event.type = SDL_QUIT;
-
-        SDL_PushEvent(&event);
-         */
-    }
-
-    // Render about popup?
-    if (ImGui::BeginPopupModal("About Panorama...", &bIsAboutOpen, ImGuiWindowFlags_NoResize)) {
-        AboutDialog::renderUI();
-        ImGui::EndPopup();
-    }
 
     ImGui::EndChild();
 }

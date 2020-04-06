@@ -20,15 +20,71 @@
 
 using std::string;
 
-panorama::MainWindow::MainWindow(GLFWwindow *pGlfwWindow,
+using panorama::MainWindow;
+
+MainWindow::MainWindow(GLFWwindow *pGlfwWindow,
                                 const std::string &sTitle, int w, int h) : Window(pGlfwWindow, sTitle, w, h),
         m_eMeasurementUnits{MeasurementUnits::MEASUREMENT_UNITS_BINARY},
         m_oSidebar{w * SIDEBAR_WIDTH_PERCENT}, m_oCpuPane{ },
         m_oProcessListPane{ }, m_oMemInfoPane{ } { }
 
-panorama::MainWindow::~MainWindow() { }
+MainWindow::~MainWindow() { }
 
-void panorama::MainWindow::renderUI() {
+void MainWindow::drawMenubar() {
+    if (ImGui::BeginMainMenuBar()) {
+        // File menu
+        if (ImGui::BeginMenu("File")) {
+            // Exit
+            if (ImGui::MenuItem("Exit", "ALT+F4")) {
+                // TODO: Implement this
+            }
+
+            ImGui::EndMenu();
+        }
+
+        // View menu
+        if (ImGui::BeginMenu("View")) {
+            // Measurement unit
+            if (ImGui::BeginMenu("Measurement Unit")) {
+                if (ImGui::MenuItem("SI")) {
+                    // TODO: Implement this
+                }
+
+                if (ImGui::MenuItem("Binary")) {
+                    // TOOD: Implement this
+                }
+
+                ImGui::EndMenu();
+            }
+
+            // Theme menu
+            if (ImGui::BeginMenu("Theme")) {
+                if (ImGui::MenuItem("Light (Default)")) {
+                }
+
+                if (ImGui::MenuItem("Dark")) {
+                }
+
+                if (ImGui::MenuItem("Classic")) {
+                }
+                ImGui::EndMenu();
+            }
+            ImGui::EndMenu();
+        }
+
+        // Help menu
+        if (ImGui::BeginMenu("Help")) {
+            if (ImGui::MenuItem("About Panorama..."), "F1") {
+                // TODO: Implement this
+            }
+            ImGui::EndMenu();
+        }
+
+        ImGui::EndMainMenuBar();
+    }
+}
+
+void MainWindow::renderUI() {
     // Static updater tasks
     // TOFIX: This whole block is kindda ugly. Must be some way of unifying and templating this entire thing...
     static auto futUsageUpdaterTask = m_oCpuPane.cpuUsage().launchCpuUsageSampleTask();
@@ -86,6 +142,8 @@ void panorama::MainWindow::renderUI() {
     // Begin rendering the UI
     ImGui::PushFont(panorama::getFont(PANORAMA_FONT_REGULAR));
 
+    drawMenubar();
+
     // Main column layout
     ImGui::BeginColumns("columns", 2, ImGuiColumnsFlags_NoResize);
 
@@ -111,4 +169,5 @@ void panorama::MainWindow::renderUI() {
     ImGui::EndColumns();
 
     ImGui::PopFont();
+
 }
