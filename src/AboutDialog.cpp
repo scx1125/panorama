@@ -16,6 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <GLFW/glfw3.h>
 #include "AboutDialog.h"
 
 void panorama::AboutDialog::renderUI() {
@@ -37,7 +38,7 @@ void panorama::AboutDialog::renderUI() {
 
     ImGui::Separator();
 
-    ImGui::Text("Copyright (c) Ronen Lapushner 2018-2019.");
+    ImGui::Text("Copyright (c) Ronen Lapushner 2018 - 2020.");
     ImGui::Text("Redistributed under the GNU GPL v3+ license.");
 
     ImGui::Separator();
@@ -63,21 +64,11 @@ void panorama::AboutDialog::renderUI() {
     ImGui::TextDisabled(IMGUI_VERSION);
     ImGui::NextColumn();
 
-    // SDL version
-    /**
-    ImGui::TextDisabled("SDL Version");
+    // GLFW version
+    ImGui::TextDisabled("GLFW Version");
     ImGui::NextColumn();
-    {
-        SDL_version sdlVersionInfo;
-
-        SDL_VERSION(&sdlVersionInfo);
-
-        ImGui::TextDisabled("%d.%d.%d", sdlVersionInfo.major,
-                            sdlVersionInfo.minor,
-                            sdlVersionInfo.patch);
-        ImGui::NextColumn();
-    }
-     */
+    ImGui::TextDisabled("%d.%d.%d", GLFW_VERSION_MAJOR, GLFW_VERSION_MINOR, GLFW_VERSION_REVISION);
+    ImGui::NextColumn();
 
     // FontAwesome version
     // TODO: Find a way to extract this at compile time/runtime - currently hardcoded!
