@@ -36,7 +36,9 @@ void MainWindow::drawMenubar() {
         if (ImGui::BeginMenu("File")) {
             // Exit
             if (ImGui::MenuItem("Exit", "ALT+F4")) {
-                // TODO: Implement this
+                // Flag GLFW window
+                // TODO: Hacky. Let Window class have a close() method, call this in it.
+                glfwSetWindowShouldClose(g_pGlfwWindow);
             }
 
             ImGui::EndMenu();
