@@ -18,6 +18,8 @@
 
 #include "MemoryInfoPane.h"
 
+using namespace panorama::guiutils;
+
 panorama::MemoryInfoPane::MemoryInfoPane()
         : m_eUnit{MeasurementUnit::UNIT_GIB}, m_eUnitScale{MeasurementScale::MEASUREMENT_SCALE_BINARY}  { }
 
@@ -74,11 +76,11 @@ void panorama::MemoryInfoPane::renderUI() {
 
     // RAM Usage graph
     const ImVec2 v2RamUsageGraphSize = ImVec2(ImGui::GetContentRegionAvailWidth(), ImGui::GetWindowHeight() * 0.4f);
-    ImGui::PlotLines("##ramplot", m_oMemInfo.ramUsageVector().data(), PANORAMA_MEMINFO_SAMPLES,
+    ImGui::PlotHistogram("##ramplot", m_oMemInfo.ramUsageVector().data(), PANORAMA_MEMINFO_SAMPLES,
                      0, "RAM Usage (Percents)",
                      0, 100,
                      v2RamUsageGraphSize);
-    panorama::guiutils::drawBackgroundTextOnGraph(panorama::getFont(PANORAMA_FONT_EXTRALARGE), v2RamUsageGraphSize,
+    guiutils::drawBackgroundTextOnGraph(panorama::getFont(PANORAMA_FONT_EXTRALARGE), v2RamUsageGraphSize,
                                                   memoryUsageToString(m_oMemInfo.ramUsageVector().back()),
                                                   0.4f);
 
@@ -108,7 +110,7 @@ void panorama::MemoryInfoPane::renderUI() {
     ImGui::Separator();
 
     // Swap usage graph
-    ImGui::PlotLines("##swapplot", m_oMemInfo.swapUsageVector().data(), PANORAMA_MEMINFO_SAMPLES,
+    ImGui::PlotHistogram("##swapplot", m_oMemInfo.swapUsageVector().data(), PANORAMA_MEMINFO_SAMPLES,
                      0, "Swap Usage (Percents)",
                      0, 100,
                      ImVec2(ImGui::GetContentRegionAvailWidth(), ImGui::GetWindowHeight() * 0.4f));
