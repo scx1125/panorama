@@ -19,8 +19,9 @@
 #include "Window.h"
 
 using std::string;
+using panorama::Window;
 
-panorama::Window::Window(GLFWwindow *pGlfwWindow, std::string sTitle, int w, int h) :
+Window::Window(GLFWwindow *pGlfwWindow, std::string sTitle, int w, int h) :
         m_pRawWindow{pGlfwWindow}, m_sTitle{sTitle}, m_iWidth{w}, m_iHeight{h},
         m_bMaximized{false},
         m_eWindowFlags{ ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoCollapse } {
@@ -29,47 +30,34 @@ panorama::Window::Window(GLFWwindow *pGlfwWindow, std::string sTitle, int w, int
         m_sTitle = " ";
 }
 
-panorama::Window::~Window() { }
+Window::~Window() { }
 
-void panorama::Window::setWidth(int w) {
+void Window::setWidth(int w) {
     m_iWidth = w;
 }
 
-void panorama::Window::setHeight(int h) {
+void Window::setHeight(int h) {
     m_iHeight = h;
 }
 
-void panorama::Window::setSize(int w, int h) {
-    setWidth(w);
-    setHeight(h);
-}
-
-void panorama::Window::setTitle(std::string sTitle) {
-    m_sTitle = std::move(sTitle);
-}
-
-void panorama::Window::setMaximized(bool bMaximized) {
+void Window::setMaximized(bool bMaximized) {
     m_bMaximized = bMaximized;
 }
 
-void panorama::Window::setWindowFlags(ImGuiWindowFlags eWinFlags) {
+void Window::setWindowFlags(ImGuiWindowFlags eWinFlags) {
     m_eWindowFlags = eWinFlags;
 }
 
-int panorama::Window::width() const {
+int Window::width() const {
     return m_iWidth;
 }
 
-int panorama::Window::height() const {
+int Window::height() const {
     return m_iHeight;
 }
 
-std::string panorama::Window::title() const {
+std::string Window::title() const {
     return m_sTitle;
-}
-
-bool panorama::Window::maximized() {
-    return m_bMaximized;
 }
 
 void panorama::Window::render() {
@@ -103,4 +91,8 @@ void panorama::Window::render() {
 
     ImGui::End();
     ImGui::PopStyleVar();
+}
+
+void Window::close() {
+    glfwSetWindowShouldClose(m_pRawWindow, static_cast<int>(true));
 }

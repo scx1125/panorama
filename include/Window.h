@@ -40,23 +40,20 @@ namespace panorama {
         // Setters
         void setWidth(int w);
         void setHeight(int h);
-        void setSize(int w, int h);
-
-        void setTitle(std::string sTitle);
 
         void setMaximized(bool bMaximized);
 
         void setWindowFlags(ImGuiWindowFlags eWinFlags);
         // Getters
-        int width()  const;
-        int height() const;
+        inline int width()  const;
+        inline int height() const;
 
-        bool maximized();
-
-        std::string title() const;
+        inline std::string title() const;
 
         // Render methods
         void render();
+
+        void close();
 
     private:
         // Overridable UI render thread
