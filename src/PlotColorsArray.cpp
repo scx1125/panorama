@@ -18,17 +18,19 @@
 
 #include "PlotColorsArray.h"
 
-panorama::PlotColorsArray::PlotColorsArray(int nColors)
-        : m_upColorsArray{new ImU32[nColors]}, m_randEngine{m_randDevice()}, m_dist{0.3f, 1.0f} {
+using panorama::guiutils::PlotColorsArray;
+
+PlotColorsArray::PlotColorsArray(int nColors) {
+    // Initialize random engine
+    std::mt19937 engine{std::random_device{}()};
+    std::uniform_real_distribution<float> dist(COLOR_DIST_MIN, COLOR_DIST_MAX);
+
     // Initialize colors
-    for (int i = 0; i < nColors; i++)
-        m_upColorsArray[i] = generateRandomColor();
+    for (int i = 0; i < nColors; i++) {
+        ImVec4 colorVec = ImVec4(dist(engine), dist(engine), dist(engine), 1.0f);
+        m_vColors.push_back(ImGui::ColorConvertFloat4ToU32(colorVec));
+    }
 }
 
-panorama::PlotColorsArray::~PlotColorsArray() { }
+PlotColorsArray::~PlotColorsArray() { }
 
-ImU32 panorama::PlotColorsArray::generateRandomColor() {
-    ImVec4 vec4(m_dist(m_randEngine), m_dist(m_randEngine), m_dist(m_randEngine), 1.0f);
-
-    return ImGui::ColorConvertFloat4ToU32(vec4);
-}

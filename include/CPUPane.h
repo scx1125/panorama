@@ -33,7 +33,8 @@
 #include "PlotColorsArray.h"
 
 #define PANORAMA_CPUGRAPH_MAX_PER_ROW 4
-#define PANORAMA_CPU_USAGE_SAMPLE_RATE 1
+
+using panorama::guiutils::PlotColorsArray;
 
 namespace panorama {
 

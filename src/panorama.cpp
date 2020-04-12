@@ -77,7 +77,6 @@ static void loadFonts(ImGuiIO &io) {
         std::cerr << "Error: Could not find font " << sFontPath << ", using fallback!" << std::endl;
 
         // Fallback to default font
-        // TODO: Add this font but with different sizes. Should still look decent if font is missing.
         const int FONT_COUNT = 3;
         for (int i = 0; i < FONT_COUNT; i++)
             io.Fonts->AddFontDefault();

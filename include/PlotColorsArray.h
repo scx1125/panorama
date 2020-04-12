@@ -19,36 +19,34 @@
 #ifndef PANORAMA_PLOTCOLORSARRAY_H
 #define PANORAMA_PLOTCOLORSARRAY_H
 
-#include <memory>
 #include <random>
-#include <functional>
+#include <vector>
 
 #include "imgui.h"
 
 namespace panorama {
+    namespace guiutils {
 
-    class PlotColorsArray {
-    public:
-        // Cnstr.
-        explicit PlotColorsArray(int nColors);
+        class PlotColorsArray {
+        public:
+            // Cnstr.
+            explicit PlotColorsArray(int nColors);
 
-        // Dstr.
-        ~PlotColorsArray();
+            // Dstr.
+            ~PlotColorsArray();
 
-        // Getters
-        inline ImU32 getColor(int nIndex) { return m_upColorsArray[nIndex]; }
+            // Getters
+            inline ImU32 getColor(int nIndex) { return m_vColors.at(nIndex); }
 
-    private:
-        // Methods
-        ImU32 generateRandomColor();
+        private:
+            // Properties
+            std::vector<ImU32> m_vColors;
 
-        // Properties
-        std::random_device m_randDevice;
-        std::mt19937 m_randEngine;
-        std::uniform_real_distribution<float> m_dist;
-        std::unique_ptr<ImU32[]> m_upColorsArray;
-    };
+            // Constants
+            const float COLOR_DIST_MIN = 0.3f;
+            const float COLOR_DIST_MAX = 1.0f;
+        };
 
+    }
 }
-
 #endif //PANORAMA_PLOTCOLORSARRAY_H
