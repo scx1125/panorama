@@ -32,14 +32,6 @@ Window::Window(GLFWwindow *pGlfwWindow, std::string sTitle, int w, int h) :
 
 Window::~Window() { }
 
-void Window::setWidth(int w) {
-    m_iWidth = w;
-}
-
-void Window::setHeight(int h) {
-    m_iHeight = h;
-}
-
 void Window::setMaximized(bool bMaximized) {
     m_bMaximized = bMaximized;
 }

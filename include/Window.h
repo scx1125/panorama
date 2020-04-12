@@ -38,12 +38,9 @@ namespace panorama {
         virtual ~Window();
 
         // Setters
-        void setWidth(int w);
-        void setHeight(int h);
-
         void setMaximized(bool bMaximized);
-
         void setWindowFlags(ImGuiWindowFlags eWinFlags);
+
         // Getters
         inline int width()  const;
         inline int height() const;
