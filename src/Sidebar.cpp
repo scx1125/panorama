@@ -24,15 +24,11 @@ panorama::Sidebar::Sidebar(float fWidth)
 panorama::Sidebar::~Sidebar() { }
 
 void panorama::Sidebar::renderUI() {
-    const int SIDEBAR_BUTTON_PADDING = 30;
-
     // Determine scaling
     if (panorama::guiutils::getScalingFactor() > 1.0f)
-        m_fWidth = ImGui::CalcTextSize("PROCESSES").x + SIDEBAR_BUTTON_PADDING;
+        m_fWidth = ImGui::CalcTextSize("PROCESSES").x;
 
     const ImVec2 v2ButtonSize = ImVec2(m_fWidth, m_fWidth / 2);
-
-    ImGui::BeginChild("##sidebar");
 
     // CPU Pane button
     if (ImGui::Selectable(ICON_FA_MICROCHIP " CPU",
@@ -48,6 +44,4 @@ void panorama::Sidebar::renderUI() {
     if (ImGui::Selectable(ICON_FA_MEMORY " MEMORY",
                           (m_eCurrentlyVisiblePane == PaneType::PANETYPE_MEMORY), 0, v2ButtonSize))
         m_eCurrentlyVisiblePane = PaneType::PANETYPE_MEMORY;
-
-    ImGui::EndChild();
 }
